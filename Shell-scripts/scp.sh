@@ -1,6 +1,15 @@
 #!/bin/bash
 
-function scp_function() {
+# Global variables declarations
+transfer_direction=("Download" "Upload")
+os_arr=("Windows" "Linux")
+options_one=("Hostname" "IP Address") #the user will have to choose to name the remote host as IP or by its Hostname
+r_username=$(read -r -p "Enter the username of remote computer: ")
+r_hostname=$(read -r -p "Enter the Hostname of the remote computer: ")
+remote_info="$r_username"@"$r_hostname"
+
+# beginning = main
+function beginning() {
     printf "\n
     ---------------------------------------------------------------------------\n
     A Script to that simplifies files transfering using SCP mathod.\n
@@ -11,21 +20,21 @@ function scp_function() {
     SCP works the same for Windows, Linux and MacOS.\n
     ---------------------------------------------------------------------------\n
     Author: Nivaisman\n
-    Github: https://www.github.com/nivaisman\n"
+    Github: https://www.github.com/nivaisman\n
+    ---------------------------------------------------------------------------\n"
+}
 
-    # the user will be prompted to choose origin and destination Operating systems
-    transfer_direction=("Download" "Upload")
-    #os_arr=("Linux" "Windows")
-
-    echo "Please choose transfer Direction: "
+# User is asked to choose direction: Upload to remote OR Download from remote
+function direction() {
+    echo "Please choose transfer Direction (Upload to remote host or Download from Remote Host): "
     select direction in "${transfer_direction[@]}"; do
         case $direction in
         "Download")
-            echo "You\'ve chosen: " "${transfer_direction[0]}" # Download to local computer
+            echo "You've chosen: " "${transfer_direction[0]}" # Download from remote host to localhost
             break
             ;;
         "Upload")
-            echo "You\'ve chosen: " "${transfer_direction[1]}" # Upload to remote computer
+            echo "You've chosen: " "${transfer_direction[1]}" # Upload from localhost to remote host
             break
             ;;
         *)
@@ -34,26 +43,87 @@ function scp_function() {
             ;;
         esac
     done
+}
 
-    # The user will be prompted to choose origin and destination Operating systems
-    #if [[ $direction == "1" ]]; then
+# The user will be prompted to choose local and remote Operating systems
+function os_selection() {
 
-    #local_os=read -p -r "fff"
-    # select os_type in "${os_arr[@]}"; do
-    #     case $os_type in
+    echo "You've chosen: $direction"
+    if [[ $direction == "${transfer_direction[0]}" ]]; then
+        select local_os in "${os_arr[@]}"; do
+            printf "Select your local Operating System:\n"
+            case $local_os in
+            "Windows")
+                break
+                ;;
+            "Linux")
+                break
+                ;;
+            *)
+                echo "Not a valid option. Good-Bye"
+                exit 1
+                ;;
+            esac
+        done
+    fi
 
-    # esac
+    if [[ $local_os == "${os_arr[0]}" ]]; then
+        echo "Your local os is: \"${os_arr[0]}\""
+        select remote_os in "${os_arr[@]}"; do
+            printf "Select the remote Operating System:\n"
+            case $remote_os in
+            "Windows")
+                break
+                ;;
+            "Linux")
+                break
+                ;;
+            *)
+                echo "Not a valid option. Good-Bye"
+                exit 1
+                ;;
+            esac
+        done
 
+    elif [[ $local_os == "${os_arr[1]}" ]]; then
+        echo "Your local os is: \"${os_arr[1]}\""
+        select remote_os in "${os_arr[@]}"; do
+            printf "Select the remote Operating System:\n"
+            case $remote_os in
+            "Windows")
+                break
+                ;;
+            "Linux")
+                break
+                ;;
+            *)
+                echo "Not a valid option. Good-Bye"
+                exit 1
+                ;;
+            esac
+        done
+    fi
+
+    if [[ $direction == "Download" ]]; then
+        echo "Downloading from $remote_os to $local_os"
+    elif [[ $direction == "Upload" ]]; then
+        echo "Uploading from $local_os to $remote_os"
+    fi
+}
+
+function remote_details() {
     # The user will be prompted to enter the username and the IP or Hostname of the remote computer
     echo " "
-    read -r -p "Enter the username of remote computer: " r_username
-    options_one=("Hostname" "IP Address")
+    #read -r -p "Enter the username of remote computer: " r_username
+    $r_username
+    #options_one=("Hostname" "IP Address")
     printf "\n"
     echo "Please choose either Hostname or IP Address of remote computer: "
     select opt_one in "${options_one[@]}"; do
         case $opt_one in
         "Hostname")
-            echo "You've selected Hostname"
+            echo "You've selected: Hostname. Please enter it:"
+            #remote_host=$(read -r)
             break
             ;;
         "IP Address")
@@ -67,61 +137,65 @@ function scp_function() {
         esac
     done
 
-    # validates the input and opt the user for the selected option
-    if [[ ($opt_one == "1") || ($opt_one == "Hostname") ]]; then
-        read -r -p "Enter the Hostname of the remote computer: " r_hostname
-        printf "The Hostname is: %s" "$r_hostname"
-        remote_info="$r_username"@"$r_hostname"
-    elif [[ ($opt_one == "2") || ($opt_one == "IP Address") ]]; then
-        read -r -p "Enter the IP-Address of the remote computer: " r_ip
-        printf "The IP is: %s" "$r_ip"
-        remote_info="$r_username@$r_ip"
-    fi
-    printf "\nThe remote computer details are: %s" "$remote_info"
-    echo " "
-    # after the user inserted the username and the hostname/ip-address, it's time to insert the remote path of files to transfer
-    printf "\nEnter the origin path of the file you wish to transfer. for example: \
+}
+
+# validates the input and opt the user for the selected option
+if [[ ($opt_one == "1") || ($opt_one == "Hostname") ]]; then
+    $r_hostname
+    printf "The Hostname is: %s" "$r_hostname"
+    remote_info="$r_username"@"$r_hostname"
+elif [[ ($opt_one == "2") || ($opt_one == "IP Address") ]]; then
+    read -r -p "Enter the IP-Address of the remote computer: " r_ip
+    printf "The IP is: %s" "$r_ip"
+    remote_info="$r_username@$r_ip"
+fi
+printf "\nThe remote computer details are: %s" "$remote_info"
+echo " "
+# after the user inserted the username and the hostname/ip-address, it's time to insert the remote path of files to transfer
+printf "\nEnter the origin path of the file you wish to transfer. for example: \
 	\nif the file is on your userhome directory, enter the path as following: \
 	\nFor Windows: \"c:/users/%s/\" \
 	\nFor Unix:    \"/home/%s/\"\n" "$r_username" "$r_username"
-    read -r -p "PATH: " origin_dir
-    read -r -p "Enter the filename with extension. For example: \"File.txt\": " origin_filename
-    origin_path="$origin_dir$origin_filename"
-    printf "The remote file path is: \"%s\"\n" "$origin_path"
-    #printf "The remote file path is: \"%s%s\"" "$r_dir" "$origin_filename"
+read -r -p "PATH: " origin_dir
+read -r -p "Enter the filename with extension. For example: \"File.txt\": " origin_filename
+origin_path="$origin_dir$origin_filename"
+printf "The remote file path is: \"%s\"\n" "$origin_path"
+#printf "The remote file path is: \"%s%s\"" "$r_dir" "$origin_filename"
 
-    printf "\nEnter the destination path with forward-slash \"/\" at the end of it. \
+printf "\nEnter the destination path with forward-slash \"/\" at the end of it. \
 			\nUse absolute path.\ne.g: /home/%s/\n" "$USER"
-    read -r -p "Destination PATH: " dest_dir
-    printf "The Destination file path is: %s" "$dest_dir"
-    printf "\nEnter the filename you wish to save the file in. \
+read -r -p "Destination PATH: " dest_dir
+printf "The Destination file path is: %s" "$dest_dir"
+printf "\nEnter the filename you wish to save the file in. \
 			\ndon\'t forget the file extension in the end \(if there\'s any\).\n"
-    read -r -p "Filename: " dest_file
-    dest_path="$dest_dir$dest_file"
-    printf "The local file path is: %s" "$dest_file"
-    printf "The file will be saved at: %s" "$dest_path"
-    #printf "The SCP command is: \nscp %s:" $remote_info scp nivva@niv-asus:c:/users/.ssh/id_rsa.pub ~/id_rsa.pub
-    printf "\nThe scp command is: \nscp %s:%s %s\n" "$remote_info" "$origin_path" "$dest_path"
-    printf "\nDo you wish to continue?\n"
-    options_2=("Yes" "No")
-    select opt2 in "${options_2[@]}"; do
-        case $opt2 in
-        "Yes" | "y" | "Y" | "1")
-            echo "Starting the transfer"
-            sleep 2
-            scp "$remote_info:$origin_path" "$dest_path"
-            break
-            ;;
-        "No" | "n" | "N" | "2")
-            echo "OK. Good-Bye"
-            break
-            ;;
-        *)
-            echo "Not a valid option."
-            break
-            ;;
-        esac
-    done
-}
+read -r -p "Filename: " dest_file
+dest_path="$dest_dir$dest_file"
+printf "The local file path is: %s" "$dest_file"
+printf "The file will be saved at: %s" "$dest_path"
+#printf "The SCP command is: \nscp %s:" $remote_info scp nivva@niv-asus:c:/users/.ssh/id_rsa.pub ~/id_rsa.pub
+printf "\nThe scp command is: \nscp %s:%s %s\n" "$remote_info" "$origin_path" "$dest_path"
+printf "\nDo you wish to continue?\n"
+options_2=("Yes" "No")
+select opt2 in "${options_2[@]}"; do
+    case $opt2 in
+    "Yes" | "y" | "Y" | "1")
+        echo "Starting the transfer"
+        sleep 2
+        scp "$remote_info:$origin_path" "$dest_path"
+        break
+        ;;
+    "No" | "n" | "N" | "2")
+        echo "OK. Good-Bye"
+        break
+        ;;
+    *)
+        echo "Not a valid option."
+        break
+        ;;
+    esac
+done
 
-scp_function
+#functions calling
+beginning
+direction
+os_selection
