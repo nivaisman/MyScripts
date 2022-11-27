@@ -36,7 +36,7 @@ remote_info="${r_username}+@+${Host_IP}"
 #    4) file_details
 
 function main() {
-    printf "Select your local Operating System:\n"
+    printf "\nSelect local Operating System:\n"
     select local_os in "${os_arr[@]}"; do
         case $local_os in
             "Windows")
@@ -53,7 +53,7 @@ function main() {
     done
     echo "$local_os"
 
-    printf "Select remote Operating System:\n"
+    printf "\nSelect remote Operating System:\n"
     select remote_os in "${os_arr[@]}"; do
         case $remote_os in
             "Windows")
@@ -69,7 +69,6 @@ function main() {
         esac
     done
     echo "$remote_os"
-
 }
 
 function direction() {
@@ -93,14 +92,10 @@ function direction() {
 }
 
 if [ $direction = ${transfer_direction[0]} ]; then
-    # The user will be prompted to choose local and remote Operating systems
-    function dl_os_selection() {
-
         echo "You've chosen: $direction"
         if [[ $direction == "${transfer_direction[0]}" ]]; then
             echo "test"
-        fi
-    }
+    fi
 
 elif [ $direction = ${transfer_direction[1]} ]; then
     function ul_os_selection() {
