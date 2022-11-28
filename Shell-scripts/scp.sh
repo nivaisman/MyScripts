@@ -2,14 +2,14 @@
 
 printf "
   ==========================================
-|| Creator: Nivaisman                       ||
-|| Email: niv.devmail@gmail.com             ||
-|| Github: https://www.github.com/nivaisman ||
+||Creator: Nivaisman                        ||
+||Email: niv.devmail@gmail.com              ||
+||Github: https://www.github.com/nivaisman  ||
 ||                                          ||
   ==========================================
-|| Description:                             ||
-|| A script that simplifies the SCP method  ||
-|| file transferring between hosts          ||
+||Description:                              ||
+||A script that simplifies the SCP method   ||
+||file transferring between hosts           ||
 ||                                          ||
 || Requirements:                            ||
 || Knowing the remote host's:               ||
@@ -21,12 +21,12 @@ printf "
 ||Current Version: 1.3                      ||
 ||                                          ||
 ||Changes:                                  ||
-||  v1.3: Functions, Structure and variables||
-||        updates                           ||
-||  v1.2: Updated the flow                  ||
-||  v1.1: Made functions instead of simple  ||
+|| v1.3: Functions, Structure and variables ||
+||       updates                            ||
+|| v1.2: Updated the flow                   ||
+|| v1.1: Made functions instead of simple   ||
 ||        flow                              ||
-||  v1.0: Initial script                    ||
+|| v1.0: Initial script                     ||
   ==========================================\n"
 
 # Global declarations
