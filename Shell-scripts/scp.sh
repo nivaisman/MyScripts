@@ -1,39 +1,43 @@
 #!/bin/bash
 
 printf "
-  =========================================
-||Creator: Nivaisman                       ||
-||Email: niv.devmail@gmail.com             ||
-||Github: https://www.github.com/nivaisman ||
-||                                         ||
-  =========================================
-||Description:                             ||
-||A script that simplifies the SCP method  ||
-||file transferring between hosts           ||
-||                                         ||
-||Requirements:                            ||
-||Knowing the remote host's:               ||
-|| 1) OS - Windows or Linux                ||
-|| 2) IP or Hostname                       ||
-|| 3) Username with writing permissions    ||
-|| 4) Path to save the file at             ||
-  =========================================
-||Current Version: 1.2                     ||
-||                                         ||
-||Changes: see README.md                   ||
-  =========================================\n"
+  ==========================================
+|| Creator: Nivaisman                       ||
+|| Email: niv.devmail@gmail.com             ||
+|| Github: https://www.github.com/nivaisman ||
+||                                          ||
+  ==========================================
+|| Description:                             ||
+|| A script that simplifies the SCP method  ||
+|| file transferring between hosts          ||
+||                                          ||
+|| Requirements:                            ||
+|| Knowing the remote host's:               ||
+||  1) OS - Windows or Linux                ||
+||  2) IP or Hostname                       ||
+||  3) Username with writing permissions    ||
+||  4) Path to save the file at             ||
+  ==========================================
+||Current Version: 1.3                      ||
+||                                          ||
+||Changes:                                  ||
+||  v1.3: Functions, Structure and variables||
+||        updates                           ||
+||  v1.2: Updated the flow                  ||
+||  v1.1: Made functions instead of simple  ||
+||        flow                              ||
+||  v1.0: Initial script                    ||
+  ==========================================\n"
 
 # Global declarations
 transfer_direction=("Download" "Upload")
 os_arr=("Windows" "Linux")
-Host_IP=("Hostname" "IP Address") # Hostname or IP of the remote host
-#remote_info="${remote_user}@${Host_IP}"
+Host_IP=("Hostname" "IP Address")
 
 # Structure:
-#    1) direction - Upload or Download
-#    2) os_selection - Windows, Linux
+#    1) main - beginning of function - selection of Operating Systems (Windows, Linux)
+#    2) direction - Upload or Download
 #    3) remote_details
-#    4) file_details
 
 function main() {
     printf "\nSelect local Operating System:\n"
@@ -135,12 +139,12 @@ function begin() {
     if [[ "$final_answer" == "Y" || "$final_answer" == "y" && "$direction" == "${transfer_direction[0]}" ]]; then
         printf "\nStarting SCP process..."
         sleep 1
-        scp -v "$remote_info":"$remote_path" "$local_path"
+        scp "$remote_info":"$remote_path" "$local_path"
     # User confirmed the details and chose Upload
     elif [[ "$final_answer" == "Y" || "$final_answer" == "y" && "$direction" == "${transfer_direction[1]}" ]]; then
         printf "\nStarting SCP process..."
         sleep 1
-        scp -v "$local_path" "$remote_info":"$remote_path"
+        scp "$local_path" "$remote_info":"$remote_path"
     # if the user declined the details the script will exit
     elif [[ "$final_answer" == "N" || "$final_answer" == "n" ]]; then
         sleep 1
