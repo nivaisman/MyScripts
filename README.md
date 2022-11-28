@@ -7,4 +7,8 @@ Some of the scripts were Solo made, some were as part of a team-projects.
 ## Languages used: 
  * Shell-Scripting (Bash)
 
+## Scripts in repository:
+### Bash Folder:
+ * [scp](https://github.com/nivaisman/MyScripts/blob/main/Shell-scripts/scp.sh)
+
  
