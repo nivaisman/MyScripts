@@ -27,7 +27,7 @@ printf "
 transfer_direction=("Download" "Upload")
 os_arr=("Windows" "Linux")
 Host_IP=("Hostname" "IP Address") # Hostname or IP of the remote host
-remote_info="${r_username}+@+${Host_IP}"
+remote_info="${remote_user}@${Host_IP}"
 
 # Structure:
 #    1) direction - Upload or Download
@@ -72,15 +72,15 @@ function main() {
 }
 
 function direction() {
-    echo "Please choose the transfer Direction (Upload or Download): "
+    printf "\nPlease choose the transfer Direction - Upload or Download: \n"
     select direction in "${transfer_direction[@]}"; do
         case $direction in
             "Download")
-                echo "You've chosen: " "${transfer_direction[0]}" # Download from remote host to localhost
+                echo "You've chosen: ${transfer_direction[0]} from ${remote_os} host" # Downloading from remote host
                 break
                 ;;
             "Upload")
-                echo "You've chosen: " "${transfer_direction[1]}" # Upload from localhost to remote host
+                echo "You've chosen: ${transfer_direction[1]} to ${remote_os} host" # Uploading to remote host
                 break
                 ;;
             *)
@@ -89,92 +89,67 @@ function direction() {
                 ;;
         esac
     done
+    if [ "$direction" == "${transfer_direction[0]}" ]; then
+        echo ""
+        echo "Enter the file you wish to download. use full path syntax:"
+        echo "Windows = \"c:/path/to/file.extension\""
+        echo "Linux = \"/path/to/file.extension\""
+        read -r -p "Path: " remote_path
+        echo "$remote_path"
+        sleep 1
+        printf "\nEnter destination path to save file at\n"
+        read -r -p "(Use the same template as before): " local_path
+        echo "$local_path"
+        sleep 1
+
+    elif [ "$direction" == "${transfer_direction[1]}" ]; then
+        echo ""
+        echo "Enter the file you wish to upload. use full path syntax:"
+        echo "Windows = \"c:/path/to/file.extension\""
+        echo "Linux = \"/path/to/file.extension\""
+        read -r -p "Path: " local_path
+        echo "$local_path"
+        sleep 1
+        printf "\nEnter destination path to save file at "
+        read -r -p "(Use the same template as before): " remote_path
+        echo "$remote_path"
+        sleep 1
+    fi
 }
 
-if [ $direction = ${transfer_direction[0]} ]; then
-        echo "You've chosen: $direction"
-        if [[ $direction == "${transfer_direction[0]}" ]]; then
-            echo "test"
-    fi
-
-elif [ $direction = ${transfer_direction[1]} ]; then
-    function ul_os_selection() {
-        echo "test2"
-
-    }
-fi
-    if [[ $local_os == "${os_arr[0]}" ]]; then
-        echo "Your local os is: \"${os_arr[0]}\""
-        select remote_os in "${os_arr[@]}"; do
-            printf "Select the remote Operating System:\n"
-            case $remote_os in
-                "Windows")
-                    break
-                    ;;
-                "Linux")
-                    break
-                    ;;
-                *)
-                    echo "Not a valid option. Good-Bye"
-                    exit 1
-                    ;;
-        esac
-    done
-
-elif     [[ $local_os == "${os_arr[1]}" ]]; then
-        echo "Your local os is: \"${os_arr[1]}\""
-        select remote_os in "${os_arr[@]}"; do
-            printf "Select the remote Operating System:\n"
-            case $remote_os in
-                "Windows")
-                    break
-                    ;;
-                "Linux")
-                    break
-                    ;;
-                *)
-                    echo "Not a valid option. Good-Bye"
-                    exit 1
-                    ;;
-        esac
-    done
-fi
-
-    if [[ $direction == "Download" ]]; then
-        echo "Downloading from $remote_os to $local_os"
-elif     [[ $direction == "Upload" ]]; then
-        echo "Uploading from $local_os to $remote_os"
-fi
-
 function remote_details() {
-    # The user will be prompted to enter the username and the IP or Hostname of the remote computer
+    # The user will be prompted to enter the username and the IP of the remote computer
     echo " "
-    read -r -p "Enter the username of remote computer: " r_username
-    $r_username
-    #options_one=("Hostname" "IP Address")
-    printf "\n"
-    echo "Please choose either Hostname or IP Address of remote computer: "
-    select opt_one in "${options_one[@]}"; do
-        case $opt_one in
-            "Hostname")
-                echo "You've selected: Hostname. Please enter it:"
-                #remote_host=$(read -r)
-                break
-                ;;
-            "IP Address")
-                echo "You've selected IP"
-                break
-                ;;
-            *)
-                echo "Not an option, please try again"
-                exit
-                ;;
-        esac
-    done
+    read -r -p "Enter the username of remote computer: " remote_user
+    echo "Remote user is: $remote_user"
+    printf "\nEnter the remote IP or Hostname of the remote computer.\n"
+    read -r -p "Make sure the user has Read+Write permissions: " Host_IP
+    printf "Remote IP or Hostname is: %s " "${Host_IP}"
+    echo "Is this correct? $remote_user@$Host_IP"
+    read -r -p "Enter \"y\" or \"n\"" final_answer
+}
 
+function begin() {
+    # User confirmed the details and chose Download
+    if [[ "$final_answer" == "Y" || "$final_answer" == "y" && "$direction" == "${transfer_direction[0]}" ]]; then
+        printf "\nStarting SCP process..."
+        sleep 1
+        scp -v "$remote_info":"$remote_path" "$local_path"
+    # User confirmed the details and chose Upload
+    elif [[ "$final_answer" == "Y" || "$final_answer" == "y" && "$direction" == "${transfer_direction[1]}" ]]; then
+        printf "\nStarting SCP process..."
+        sleep 1
+        scp -v "$local_path" "$remote_info":"$remote_path"
+    # if the user declined the details the script will exit
+    elif [[ "$final_answer" == "N" || "$final_answer" == "n" ]]; then
+        sleep 1
+        printf "Exiting the script\n Thank you. Good-Bye"
+        exit
+    fi
 }
 
 #functions calling
 main
-#direction
-#os_selection
+direction
+remote_details
+begin
