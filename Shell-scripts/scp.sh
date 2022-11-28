@@ -27,7 +27,7 @@ printf "
 transfer_direction=("Download" "Upload")
 os_arr=("Windows" "Linux")
 Host_IP=("Hostname" "IP Address") # Hostname or IP of the remote host
-remote_info="${remote_user}@${Host_IP}"
+#remote_info="${remote_user}@${Host_IP}"
 
 # Structure:
 #    1) direction - Upload or Download
@@ -126,6 +126,7 @@ function remote_details() {
     read -r -p "Make sure the user has Read+Write permissions: " Host_IP
     printf "Remote IP or Hostname is: %s " "${Host_IP}"
     echo "Is this correct? $remote_user@$Host_IP"
+    remote_info="${remote_user}@${Host_IP}"
     read -r -p "Enter \"y\" or \"n\"" final_answer
 }
 
