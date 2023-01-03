@@ -43,16 +43,16 @@ function main() {
     printf "\nSelect local Operating System:\n"
     select local_os in "${os_arr[@]}"; do
         case $local_os in
-            "Windows")
-                break
-                ;;
-            "Linux")
-                break
-                ;;
-            *)
-                echo "Not a valid option. Good-Bye"
-                exit 1
-                ;;
+        "Windows")
+            break
+            ;;
+        "Linux")
+            break
+            ;;
+        *)
+            echo "Not a valid option. Good-Bye"
+            exit 1
+            ;;
         esac
     done
     echo "$local_os"
@@ -60,16 +60,16 @@ function main() {
     printf "\nSelect remote Operating System:\n"
     select remote_os in "${os_arr[@]}"; do
         case $remote_os in
-            "Windows")
-                break
-                ;;
-            "Linux")
-                break
-                ;;
-            *)
-                echo "Not a valid option. Good-Bye"
-                exit 1
-                ;;
+        "Windows")
+            break
+            ;;
+        "Linux")
+            break
+            ;;
+        *)
+            echo "Not a valid option. Good-Bye"
+            exit 1
+            ;;
         esac
     done
     echo "$remote_os"
@@ -79,18 +79,18 @@ function direction() {
     printf "\nPlease choose the transfer Direction - Upload or Download: \n"
     select direction in "${transfer_direction[@]}"; do
         case $direction in
-            "Download")
-                echo "You've chosen: ${transfer_direction[0]} from ${remote_os} host" # Downloading from remote host
-                break
-                ;;
-            "Upload")
-                echo "You've chosen: ${transfer_direction[1]} to ${remote_os} host" # Uploading to remote host
-                break
-                ;;
-            *)
-                echo "Not a valid option. Good-Bye"
-                exit 1
-                ;;
+        "Download")
+            echo "You've chosen: ${transfer_direction[0]} from ${remote_os} host" # Downloading from remote host
+            break
+            ;;
+        "Upload")
+            echo "You've chosen: ${transfer_direction[1]} to ${remote_os} host" # Uploading to remote host
+            break
+            ;;
+        *)
+            echo "Not a valid option. Good-Bye"
+            exit 1
+            ;;
         esac
     done
     if [ "$direction" == "${transfer_direction[0]}" ]; then
