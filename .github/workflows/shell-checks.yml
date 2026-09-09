@@ -1,0 +1,26 @@
+name: Shell checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shell-checks:
+    name: Syntax, lint, and security regression tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check Bash syntax
+        run: bash -n Shell-scripts/scp.sh
+      - name: Run ShellCheck
+        run: shellcheck --severity=style Shell-scripts/scp.sh
+      - name: Run isolated security regression tests
+        run: python3 -m unittest discover -s tests -v
